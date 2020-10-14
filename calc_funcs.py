@@ -1,12 +1,11 @@
 
-import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from glob import glob
 
 # summarise = "Standort" or "Sektor"
 def get_portfolio_info(summarise, ticker_name_dict, ticker_percent_dict,
-                       save=False):
+                       figsize=(10,16), save=False):
     """
 
     Examples
@@ -67,7 +66,7 @@ def get_portfolio_info(summarise, ticker_name_dict, ticker_percent_dict,
     master_sektor_df_grouped['Gewichtung (%)'].sum()
 
     master_sektor_df_grouped.plot(x=summarise, y="Gewichtung (%)",
-        kind="barh", legend=False, figsize=(16,16))
+        kind="barh", legend=False, figsize=figsize)
     plt.title(f"Portfolio {summarise})",
         fontsize=fontsize+4)
     plt.xlabel("Percentage", fontsize=fontsize+4)
@@ -82,7 +81,7 @@ def get_portfolio_info(summarise, ticker_name_dict, ticker_percent_dict,
         master_sektor_df_grouped.drop([0], axis=0,
             inplace=True)
         master_sektor_df_grouped.plot(x=summarise, y="Gewichtung (%)",
-            kind="barh", legend=False, figsize=(16,16))
+            kind="barh", legend=False, figsize=figsize)
         plt.title(f"Portfolio {summarise} (America not incl.)",
             fontsize=fontsize+4)
         plt.xlabel("Percentage", fontsize=fontsize+4)
