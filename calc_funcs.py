@@ -67,7 +67,7 @@ def get_portfolio_info(summarise, ticker_name_dict, ticker_percent_dict,
 
     master_sektor_df_grouped.plot(x=summarise, y="Gewichtung (%)",
         kind="barh", legend=False, figsize=figsize)
-    plt.title(f"Portfolio {summarise})",
+    plt.title(f"Portfolio {summarise}",
         fontsize=fontsize+4)
     plt.xlabel("Percentage", fontsize=fontsize+4)
     plt.ylabel(summarise, fontsize=fontsize+4)
