@@ -166,4 +166,6 @@ def get_individual_company_info(company_name, ticker_name_dict,
             company_weight_scaled = company_weight * percent_to_scale
             company_weighting_list.append(company_weight_scaled)
     overall_company_weight = sum(company_weighting_list)
+    print(f"\n{full_name} has a weighting of {overall_company_weight} % "
+          "in your current portfolio.")
     return overall_company_weight
