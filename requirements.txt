@@ -1,3 +1,5 @@
 matplotlib
 glob2
 pandas
+numpy
+beautifulsoup4

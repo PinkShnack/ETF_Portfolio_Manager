@@ -3,9 +3,11 @@
 1. get data about all iShares ETFs from 
     "https://www.ishares.com/uk/individual/en/products/etf-investments"
     - done
+    change xml to csv (manually in excel) - done
 1a. create dict with ISIN and ticker - done
 
 2. grab the links in that website/xml doc and extract together with the data these:
+Done by downloading the source (just opened source from website right click)
     code-number, etf-ticker, DONT NEED NAME can use * inplace of it
     Create dicts of these with ticker as key
     - done
