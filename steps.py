@@ -16,9 +16,15 @@
 3a. Create the link string for pandas to download using the ticker and codenumber
 3b. Have the download function return the df from the downloaded csv file
     using the link string
-3b. 
 
 4. Create portfolio class.
-    Plan this.
+    4a. Add init and basic attributes - done
+    4b. Add loading of tickers init func -done
+    4c. add nice example - done
+    4d. maybe add the tickers each as attributes?
+
+5. Add support for different countries
+    5a. just need to redo html loading process for US, DE etc.
+    5b. add parameter to Portfolio so that they choose the country.
 
 '''
