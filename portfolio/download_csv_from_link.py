@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-import setup_data
+from portfolio import setup_data
 
 
 def get_urls_from_ticker_list(ticker_list):

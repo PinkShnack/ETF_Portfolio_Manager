@@ -4,11 +4,13 @@ from glob import glob
 
 from download_csv_from_link import get_urls_from_ticker_list, download_urls
 
-class Portfolio():
+class ETF():
 
-    def __init__(self, ticker_percent_dict, portfolio_name='', dummy_data=False):
+    def __init__(self, ticker, etf_name='', dummy_data=False):
         '''
-        Portfolio class allows users to interact with the program intuitively
+        ETF class allows users to interact with single ETFs, and can be
+        imagined as a subset of the Portfolio class.
+        Use the Portfolio class to view data from several ETFs.
 
         Parameters
         ----------
@@ -18,27 +20,18 @@ class Portfolio():
 
         Examples
         --------
-        >>> from portfolio import Portfolio
-        >>> ticker_percent_dict = {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}
-        >>> my_portfolio = Portfolio(ticker_percent_dict, "Cool Portfolio")
-        >>> my_portfolio
+        >>> from portfolio.etf import ETF
+        >>> ticker = 'CSPX'
+        >>> SP500 = ETF(ticker='CSPX', etf_name="S&P 500")
+        >>> SP500
         <Portfolio, Cool Portfolio, {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}>
 
         >>> my_portfolio.df_list[0].head(3)
         '''
 
-        self._ticker_percent_dict_init(ticker_percent_dict)
-        self.portfolio_name = portfolio_name
-        self.df_list = []
-        self._load_tickers_init(ticker_percent_dict, dummy_data)
-
-
-    def _ticker_percent_dict_init(self, ticker_percent_dict):
-        if sum(ticker_percent_dict.values()) == 100:
-            self.ticker_percent_dict = ticker_percent_dict
-        else:
-            raise ValueError(
-                "Your ticker_percent_dict percentages don't add up to 100%")
+        self.ticker = ticker
+        self.etf_name = etf_name
+        self._load_ticker_init(ticker, dummy_data)
 
 
     def _load_tickers_init(self, ticker_percent_dict, dummy_data=False):
