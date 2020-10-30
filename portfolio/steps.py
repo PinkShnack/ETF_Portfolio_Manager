@@ -23,9 +23,12 @@ Done by downloading the source (just opened source from website right click)
     4a. Add init and basic attributes - done
     4b. Add loading of tickers init func -done
     4c. add nice example - done
-    4d. maybe add the tickers each as attributes?
+    4d. maybe add the tickers each as attributes? - done added as ETF objects
+    4e. load ETFs within portfolio
 
-5. Add support for different countries
+5. Create ETF class - done
+
+6. Add support for different countries
     5a. just need to redo html loading process for US, DE etc.
     5b. add parameter to Portfolio so that they choose the country.
 

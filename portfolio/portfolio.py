@@ -1,5 +1,3 @@
-import pandas as pd
-import matplotlib.pyplot as plt
 
 import portfolio.io as port_io
 from portfolio.etf import ETF
@@ -23,6 +21,8 @@ class Portfolio():
         >>> from portfolio.portfolio import Portfolio
         >>> ticker_percent_dict = {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}
         >>> my_portfolio = Portfolio(ticker_percent_dict, "Cool Portfolio")
+        Downloading Portfolio Data
+
         >>> my_portfolio
         <Portfolio, Cool Portfolio, {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}>
 
@@ -37,7 +37,17 @@ class Portfolio():
 
         Look at the individual ETFs within the Portfolio with etf_list
 
-        >>> my_portfolio.etf_list 
+        >>> etf_info = my_portfolio.etf_list
+
+        Load both ETF and Portfolio with the API
+
+        >>> import portfolio.api as pf
+        >>> ticker_percent_dict = {'CSPX': 10, 'IAEA': 75, 'SUWU': 15}
+        >>> my_portfolio_2 = pf.Portfolio(ticker_percent_dict, "Portfolio 2")
+        Downloading Portfolio Data
+
+        >>> my_portfolio_2
+        <Portfolio, Portfolio 2, {'CSPX': 10, 'IAEA': 75, 'SUWU': 15}>
 
         '''
 
@@ -64,6 +74,7 @@ class Portfolio():
 
         chosen_tickers = [i for i in ticker_percent_dict.keys()]
 
+        print("Downloading Portfolio Data")
         df_list = port_io.load_tickers(ticker_list=chosen_tickers,
                                        dummy_data=dummy_data)
 

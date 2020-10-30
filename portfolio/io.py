@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 from portfolio import setup_data
 from glob import glob
 
@@ -10,7 +9,7 @@ def get_urls_from_ticker_list(ticker_list):
 
     Examples
     --------
-    >>> from download_csv_from_link import get_urls_from_ticker_list
+    >>> from portfolio.io import get_urls_from_ticker_list
     >>> ticker_list = ['CSPX', 'IAEA', 'SUWU']
     >>> url_list = get_urls_from_ticker_list(ticker_list)
     >>> url_list[0]
@@ -53,8 +52,7 @@ def download_urls(url_list):
 
     Examples
     --------
-    >>> from download_csv_from_link import (get_urls_from_ticker_list,
-    ...     download_urls)
+    >>> from portfolio.io import (get_urls_from_ticker_list, download_urls)
     >>> ticker_list = ['UEEH', 'IAEA', 'SUWU']
     >>> url_list = get_urls_from_ticker_list(ticker_list)
     >>> df_list = download_urls(url_list)
@@ -71,7 +69,7 @@ def download_urls(url_list):
 def load_tickers(ticker_list, dummy_data=False):
 
     if dummy_data:
-        print("Grabbing Dummy Data")
+        # print("Grabbing Dummy Data")
         fnames = glob("dummy_data/*.csv")
         filenames = []
         for csv_file in fnames:
@@ -84,7 +82,7 @@ def load_tickers(ticker_list, dummy_data=False):
             df_list.append(pd.read_csv(filename, header=2))
 
     else:
-        print("Downloading ETF Data")
+        # print("Downloading ETF Data")
         df_list = download_urls(
             get_urls_from_ticker_list(ticker_list))
 

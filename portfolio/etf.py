@@ -24,7 +24,7 @@ class ETF():
         >>> ticker = 'CSPX'
         >>> SP500 = ETF(ticker='CSPX', etf_name="S&P 500")
         >>> SP500
-        <ETF, S&P 500, CSPX>
+        <ETF, CSPX, S&P 500>
 
         The df attribute is just a Pandas dataframe, allowing you to use Pandas
         for any data analysis you wish.
