@@ -36,10 +36,23 @@ def create_ISIN_ticker_dict(df=product_data_ticker):
     return(dict_)
 
 
+def get_info_using_ticker_list(ticker_list, output='name'):
+    if 'name' in output.lower():
+        dict_ = create_ticker_name_dict()
+    elif 'isin' in output.lower():
+        dict_ = create_ticker_name_dict()
+
+    info = []
+    for k, v in dict_.items():
+        for ticker in ticker_list:
+            if ticker == k:
+                info.append(v)
+
+    return info
 
 
 def create_ticker_code_number_dict(
-    file = 'all_ishares_uk_etf_links.html'):
+        file='all_ishares_uk_etf_links.html'):
 
     with open(file, 'r', encoding='cp850') as html_file:
         source = html_file.read()

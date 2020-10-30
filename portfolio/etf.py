@@ -1,8 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from glob import glob
 
-from download_csv_from_link import get_urls_from_ticker_list, download_urls
+import portfolio.io as port_io
+
 
 class ETF():
 
@@ -24,48 +24,45 @@ class ETF():
         >>> ticker = 'CSPX'
         >>> SP500 = ETF(ticker='CSPX', etf_name="S&P 500")
         >>> SP500
-        <Portfolio, Cool Portfolio, {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}>
+        <ETF, S&P 500, CSPX>
 
-        >>> my_portfolio.df_list[0].head(3)
+        The df attribute is just a Pandas dataframe, allowing you to use Pandas
+        for any data analysis you wish.
+
+        >>> df = SP500.df
+
+        Check out the first 3 lines in the Pandas dataframe
+
+        >>> _ = SP500.df.head(3)
+
         '''
 
         self.ticker = ticker
         self.etf_name = etf_name
-        self._load_ticker_init(ticker, dummy_data)
+        self.df = None  # will be replaced with df when loaded
+        self.dummy_data = dummy_data
+        self._load_tickers_init(self.ticker, self.dummy_data)
 
+    def _load_tickers_init(self, ticker, dummy_data):
+        """ Load the chosen ticker."""
 
-    def _load_tickers_init(self, ticker_percent_dict, dummy_data=False):
+        if not isinstance(ticker, str):
+            raise ValueError("ticker must be a string")
 
-        """ Load the chosen tickers."""
+        df_list = port_io.load_tickers(ticker_list=[ticker],
+                                       dummy_data=dummy_data)
 
-        if not isinstance(ticker_percent_dict, dict):
-            raise ValueError("ticker_percent_dict must be a dictionary")
-
-        chosen_tickers = [i for i in ticker_percent_dict.keys()]
-
-        if dummy_data:
-            print("Grabbing Dummy Data")
-            fnames = glob("dummy_data/*.csv")
-            filenames = []
-            for csv_file in fnames:
-                for ticker in chosen_tickers:
-                    if ticker in csv_file:
-                        filenames.append(csv_file)
-            
-            df_list = []
-            for filename in filenames:
-                df_list.append(pd.read_csv(filename, header=2))
-
+        if len(df_list) != 1:
+            raise ValueError("Problem with loading ETF, should be just 1 "
+                             "ticker, but more than 1 loaded")
         else:
-            print("Downloading ETF Data")
-            df_list = download_urls(
-                get_urls_from_ticker_list(chosen_tickers))
+            df = df_list[0]
 
-        self.df_list = df_list
-        
+        self.df = df
+
     def __repr__(self):
         return '<%s, %s, %s>' % (
             self.__class__.__name__,
-            self.portfolio_name,
-            self.ticker_percent_dict
+            self.ticker,
+            self.etf_name
         )

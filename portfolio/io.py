@@ -1,10 +1,10 @@
 import pandas as pd
 import os
 from portfolio import setup_data
+from glob import glob
 
 
 def get_urls_from_ticker_list(ticker_list):
-
     """
     Get http link for etfs in ishares website.
 
@@ -48,7 +48,6 @@ def get_urls_from_ticker_list(ticker_list):
 
 
 def download_urls(url_list):
-
     """
     Download holdings data for etfs in ishares website.
 
@@ -69,4 +68,24 @@ def download_urls(url_list):
     return(df_list)
 
 
+def load_tickers(ticker_list, dummy_data=False):
 
+    if dummy_data:
+        print("Grabbing Dummy Data")
+        fnames = glob("dummy_data/*.csv")
+        filenames = []
+        for csv_file in fnames:
+            for ticker in ticker_list:
+                if ticker in csv_file:
+                    filenames.append(csv_file)
+
+        df_list = []
+        for filename in filenames:
+            df_list.append(pd.read_csv(filename, header=2))
+
+    else:
+        print("Downloading ETF Data")
+        df_list = download_urls(
+            get_urls_from_ticker_list(ticker_list))
+
+    return df_list
