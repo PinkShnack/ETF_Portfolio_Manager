@@ -1,1 +1,2 @@
-display_portfolio.ipynb linguist-vendored
+*.ipynb linguist-vendored
+*.html linguist-vendored
