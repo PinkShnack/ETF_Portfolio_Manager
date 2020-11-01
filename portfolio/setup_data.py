@@ -22,6 +22,14 @@ product_data_ticker.index = np.arange(0, len(product_data_ticker))
 
 # Create ticker + name dict, ISIN + ticker dict
 def create_ticker_name_dict(df=product_data_ticker):
+    '''
+
+    Examples
+    --------
+    >>> import portfolio.setup_data as setup_data
+    >>> name_dict = setup_data.create_ticker_name_dict()
+
+    '''
     dict_ = dict(zip(df.Ticker, df.Name))
     return(dict_)
 
@@ -37,6 +45,14 @@ def create_ISIN_ticker_dict(df=product_data_ticker):
 
 
 def get_info_using_ticker_list(ticker_list, output='name'):
+    '''
+
+    Examples
+    --------
+    >>> import portfolio.setup_data as setup_data
+    >>> info = setup_data.get_info_using_ticker_list(["IAEA"])
+
+    '''
     if 'name' in output.lower():
         dict_ = create_ticker_name_dict()
     elif 'isin' in output.lower():

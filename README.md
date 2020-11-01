@@ -5,4 +5,8 @@ Click the "Launch Binder" button below to try it out with some dummy ETF data. W
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/PinkShnack/ETF_Portfolio_Manager/master)
 
-We hope in future to allow the user to input a list of tickers and the program will scrap the relevant website to grab the ETF data!
+
+Feature to be added (feel free to create an Issue if you would like a feature):
+
+* Portfolio parameter support for ISIN.
+* Support for different country downloads (currently uses UK iShares website).

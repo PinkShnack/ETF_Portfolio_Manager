@@ -1,4 +1,7 @@
 
+import pandas as pd
+import matplotlib.pyplot as plt
+
 import portfolio.io as port_io
 from portfolio.etf import ETF
 import portfolio.setup_data as setup_data
@@ -38,6 +41,14 @@ class Portfolio():
         Look at the individual ETFs within the Portfolio with etf_list
 
         >>> etf_info = my_portfolio.etf_list
+
+        Plot the Portfolio summary
+
+        >>> ax = my_portfolio.plot_summarised_portfolio(groupby="Sector")
+
+        Plot the summary of each ETF
+
+        >>> axes = my_portfolio.plot_all_summarised_ETF(groupby="Sector")
 
         Load both ETF and Portfolio with the API
 
@@ -91,10 +102,65 @@ class Portfolio():
 
         ticker_list = [i for i in self.ticker_percent_dict.keys()]
 
-        info = setup_data.get_info_using_ticker_list(ticker_list, 'name')
-
         etf_list = []
-        for ticker, info_ in zip(ticker_list, info):
-            etf_list.append(ETF(ticker=ticker, etf_name=info_))
+        for ticker in ticker_list:
+            etf_list.append(ETF(ticker=ticker))
 
         self.etf_list = etf_list
+
+    def summarise_portfolio(self, groupby, sort_values_by="Weight (%)"):
+        
+        df_weighted_percent_list = []
+        for ETF in self.etf_list:
+            df_grouped = ETF.summarise(groupby=groupby,
+                                       sort_values_by=sort_values_by)
+            percent_to_scale = self.ticker_percent_dict[ETF.ticker]/100
+            df_grouped[sort_values_by] = df_grouped[sort_values_by].mul(
+                percent_to_scale)
+            df_weighted_percent_list.append(df_grouped)
+        
+        df_all_grouped = pd.DataFrame()
+        for df_weighted in df_weighted_percent_list:
+            df_all_grouped = pd.concat(
+                [df_all_grouped, df_weighted], ignore_index=True)
+
+        df_portfolio_summarised = df_all_grouped.groupby(
+            [groupby], as_index=False).sum().sort_values(
+                by=sort_values_by, ascending=False, ignore_index=True)
+
+        df_portfolio_summarised[sort_values_by].sum()
+
+        return df_portfolio_summarised
+
+    def plot_summarised_portfolio(self, groupby, sort_values_by="Weight (%)",
+                                  kind="barh", legend=False, figsize=(10, 16),
+                                  fontsize=24, save=False, **kwargs):
+        
+        df_portfolio_summarised = self.summarise_portfolio(
+            groupby=groupby, sort_values_by=sort_values_by)
+
+        ax = df_portfolio_summarised.plot(x=groupby, y=sort_values_by,
+                                          kind=kind, legend=legend,
+                                          figsize=figsize, **kwargs)
+        plt.title(f"Portfolio {groupby}", fontsize=fontsize)
+        plt.xlabel("Percentage", fontsize=fontsize)
+        plt.ylabel(groupby, fontsize=fontsize)
+        plt.xticks(fontsize=fontsize-4)
+        plt.yticks(fontsize=fontsize-4)
+        plt.tight_layout()
+        if save:
+            plt.savefig(f"Portfolio {groupby}.png")
+        
+        return ax
+
+    def plot_all_summarised_ETF(self, groupby, sort_values_by="Weight (%)",
+                                kind="barh", legend=False, save=False,
+                                **kwargs):
+        ax_list = []
+        for ETF in self.etf_list:
+            ax = ETF.plot_summarised_ETF(
+                    groupby=groupby, sort_values_by=sort_values_by, kind=kind,
+                    legend=legend, save=save, **kwargs)
+            ax_list.append(ax)
+        
+        return ax_list

@@ -2,11 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import portfolio.io as port_io
+import portfolio.setup_data as setup_data
 
 
 class ETF():
 
-    def __init__(self, ticker, etf_name='', dummy_data=False):
+    def __init__(self, ticker, dummy_data=False):
         '''
         ETF class allows users to interact with single ETFs, and can be
         imagined as a subset of the Portfolio class.
@@ -22,9 +23,9 @@ class ETF():
         --------
         >>> from portfolio.etf import ETF
         >>> ticker = 'CSPX'
-        >>> SP500 = ETF(ticker='CSPX', etf_name="S&P 500")
+        >>> SP500 = ETF(ticker='CSPX')
         >>> SP500
-        <ETF, CSPX, S&P 500>
+        <ETF, CSPX, iShares Core S&P 500 UCITS ETF USD (Acc)>
 
         The df attribute is just a Pandas dataframe, allowing you to use Pandas
         for any data analysis you wish.
@@ -34,11 +35,12 @@ class ETF():
         Check out the first 3 lines in the Pandas dataframe
 
         >>> _ = SP500.df.head(3)
+        >>> SP500.plot_summarised_ETF(groupby="Sector")
 
         '''
 
         self.ticker = ticker
-        self.etf_name = etf_name
+        self._etf_ticker_name_init()
         self.df = None  # will be replaced with df when loaded
         self.dummy_data = dummy_data
         self._load_tickers_init(self.ticker, self.dummy_data)
@@ -66,3 +68,32 @@ class ETF():
             self.ticker,
             self.etf_name
         )
+
+    def _etf_ticker_name_init(self):
+        info = setup_data.get_info_using_ticker_list([self.ticker], 'name')
+        self.etf_name = info[0]
+
+    def summarise(self, groupby, sort_values_by="Weight (%)"):
+
+        df_grouped = self.df.groupby([groupby.capitalize()],
+                     as_index=False).sum().sort_values(
+                         by=sort_values_by, ascending=False, ignore_index=True)
+
+        return df_grouped
+    
+    def plot_summarised_ETF(
+            self, groupby, sort_values_by="Weight (%)", kind="barh",
+            legend=False, save=False, **kwargs):
+
+        df_grouped = self.summarise(groupby=groupby)
+
+        ax = df_grouped.plot(x=groupby, y=sort_values_by,
+                             kind=kind, legend=legend, **kwargs)
+
+        plt.title(self.etf_name)
+        plt.tight_layout()
+        if save:
+            plt.savefig(f"{self.ticker}_{groupby}.png")
+        
+        return ax
+
