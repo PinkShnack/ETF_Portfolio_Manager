@@ -37,6 +37,11 @@ class ETF():
         >>> _ = SP500.df.head(3)
         >>> SP500.plot_summarised_ETF(groupby="Sector")
 
+        Look at the weighting of a single company
+
+        >>> SP500.get_company_info(company_name="Apple")
+        APPLE INC has a weighting of 6.54 % in this ETF.
+
         '''
 
         self.ticker = ticker
@@ -76,11 +81,11 @@ class ETF():
     def summarise(self, groupby, sort_values_by="Weight (%)"):
 
         df_grouped = self.df.groupby([groupby.capitalize()],
-                     as_index=False).sum().sort_values(
-                         by=sort_values_by, ascending=False, ignore_index=True)
+                                     as_index=False).sum().sort_values(
+            by=sort_values_by, ascending=False, ignore_index=True)
 
         return df_grouped
-    
+
     def plot_summarised_ETF(
             self, groupby, sort_values_by="Weight (%)", kind="barh",
             legend=False, save=False, **kwargs):
@@ -94,6 +99,40 @@ class ETF():
         plt.tight_layout()
         if save:
             plt.savefig(f"{self.ticker}_{groupby}.png")
-        
+
         return ax
 
+    def get_company_info(self, company_name, sort_values_by="Weight (%)"):
+
+        full_name, company_weight = self._company_weighting(
+            company_name, sort_values_by)
+
+        print(f"\n{full_name} has a weighting of {company_weight} % "
+              "in this ETF.")
+
+        return(full_name, company_weight)
+
+    def _company_weighting(self, company_name, sort_values_by):
+
+        df_copy = self.df.copy()
+
+        # Make the company name the index so we can filter by it
+        df_copy.drop(df_copy.tail(1).index, inplace=True)
+        df_copy.set_index("Name", inplace=True)
+
+        # find the company name in the new name index
+        full_name = []
+        for index_name in df_copy.index:
+            if company_name.upper() in index_name.upper():
+                full_name.append(index_name)
+
+        # check if there is only one matching name
+        if len(full_name) == 1:
+            full_name = full_name[0]
+            company_weight = df_copy.at[full_name, sort_values_by]
+            return(full_name, company_weight)
+        elif len(full_name) > 1:
+            raise ValueError("More than one company found, maybe the name you "
+                             "gave was ambiguous.")
+        else:
+            return('', None)

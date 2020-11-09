@@ -60,6 +60,10 @@ class Portfolio():
         >>> my_portfolio_2
         <Portfolio, Portfolio 2, {'CSPX': 10, 'IAEA': 75, 'SUWU': 15}>
 
+        Get weighting of single companies
+
+        >>> my_portfolio_2.get_company_info(company_name="Apple")
+
         '''
 
         self._ticker_percent_dict_init(ticker_percent_dict)
@@ -109,7 +113,7 @@ class Portfolio():
         self.etf_list = etf_list
 
     def summarise_portfolio(self, groupby, sort_values_by="Weight (%)"):
-        
+
         df_weighted_percent_list = []
         for ETF in self.etf_list:
             df_grouped = ETF.summarise(groupby=groupby,
@@ -118,7 +122,7 @@ class Portfolio():
             df_grouped[sort_values_by] = df_grouped[sort_values_by].mul(
                 percent_to_scale)
             df_weighted_percent_list.append(df_grouped)
-        
+
         df_all_grouped = pd.DataFrame()
         for df_weighted in df_weighted_percent_list:
             df_all_grouped = pd.concat(
@@ -135,7 +139,7 @@ class Portfolio():
     def plot_summarised_portfolio(self, groupby, sort_values_by="Weight (%)",
                                   kind="barh", legend=False, figsize=(10, 16),
                                   fontsize=24, save=False, **kwargs):
-        
+
         df_portfolio_summarised = self.summarise_portfolio(
             groupby=groupby, sort_values_by=sort_values_by)
 
@@ -150,7 +154,7 @@ class Portfolio():
         plt.tight_layout()
         if save:
             plt.savefig(f"Portfolio {groupby}.png")
-        
+
         return ax
 
     def plot_all_summarised_ETF(self, groupby, sort_values_by="Weight (%)",
@@ -159,8 +163,25 @@ class Portfolio():
         ax_list = []
         for ETF in self.etf_list:
             ax = ETF.plot_summarised_ETF(
-                    groupby=groupby, sort_values_by=sort_values_by, kind=kind,
-                    legend=legend, save=save, **kwargs)
+                groupby=groupby, sort_values_by=sort_values_by, kind=kind,
+                legend=legend, save=save, **kwargs)
             ax_list.append(ax)
-        
+
         return ax_list
+
+    def get_company_info(self, company_name, sort_values_by="Weight (%)"):
+
+        company_etf_weight = 0
+        for ETF in self.etf_list:
+            fn, company_weight = ETF._company_weighting(
+                company_name, sort_values_by)
+
+            if company_weight is not None:
+                percent_to_scale = self.ticker_percent_dict[ETF.ticker]/100
+
+                company_etf_weight += company_weight * percent_to_scale
+
+                full_name = fn
+
+        print(f"\n{full_name} has a weighting of {company_etf_weight} % "
+              "in this ETF.")
