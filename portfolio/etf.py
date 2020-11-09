@@ -1,4 +1,4 @@
-import pandas as pd
+
 import matplotlib.pyplot as plt
 
 import portfolio.io as port_io
@@ -35,12 +35,13 @@ class ETF():
         Check out the first 3 lines in the Pandas dataframe
 
         >>> _ = SP500.df.head(3)
-        >>> SP500.plot_summarised_ETF(groupby="Sector")
+        >>> ax = SP500.plot_summarised_etf(groupby="Sector")
 
         Look at the weighting of a single company
 
         >>> SP500.get_company_info(company_name="Apple")
         APPLE INC has a weighting of 6.54 % in this ETF.
+        ('APPLE INC', 6.54)
 
         '''
 
@@ -86,7 +87,7 @@ class ETF():
 
         return df_grouped
 
-    def plot_summarised_ETF(
+    def plot_summarised_etf(
             self, groupby, sort_values_by="Weight (%)", kind="barh",
             legend=False, save=False, **kwargs):
 
@@ -107,7 +108,7 @@ class ETF():
         full_name, company_weight = self._company_weighting(
             company_name, sort_values_by)
 
-        print(f"\n{full_name} has a weighting of {company_weight} % "
+        print(f"{full_name} has a weighting of {company_weight} % "
               "in this ETF.")
 
         return(full_name, company_weight)

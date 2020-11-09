@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 
 import portfolio.io as port_io
 from portfolio.etf import ETF
-import portfolio.setup_data as setup_data
 
 
 class Portfolio():
 
-    def __init__(self, ticker_percent_dict, portfolio_name='', dummy_data=False):
+    def __init__(self, ticker_percent_dict, portfolio_name='',
+                 dummy_data=False):
         '''
         Portfolio class allows users to interact with the program intuitively
 
@@ -48,7 +48,7 @@ class Portfolio():
 
         Plot the summary of each ETF
 
-        >>> axes = my_portfolio.plot_all_summarised_ETF(groupby="Sector")
+        >>> axes = my_portfolio.plot_all_summarised_etf(groupby="Sector")
 
         Load both ETF and Portfolio with the API
 
@@ -63,6 +63,7 @@ class Portfolio():
         Get weighting of single companies
 
         >>> my_portfolio_2.get_company_info(company_name="Apple")
+        APPLE INC has a weighting of 1.309 % in this Portfolio.
 
         '''
 
@@ -115,10 +116,10 @@ class Portfolio():
     def summarise_portfolio(self, groupby, sort_values_by="Weight (%)"):
 
         df_weighted_percent_list = []
-        for ETF in self.etf_list:
-            df_grouped = ETF.summarise(groupby=groupby,
+        for etf in self.etf_list:
+            df_grouped = etf.summarise(groupby=groupby,
                                        sort_values_by=sort_values_by)
-            percent_to_scale = self.ticker_percent_dict[ETF.ticker]/100
+            percent_to_scale = self.ticker_percent_dict[etf.ticker]/100
             df_grouped[sort_values_by] = df_grouped[sort_values_by].mul(
                 percent_to_scale)
             df_weighted_percent_list.append(df_grouped)
@@ -157,12 +158,12 @@ class Portfolio():
 
         return ax
 
-    def plot_all_summarised_ETF(self, groupby, sort_values_by="Weight (%)",
+    def plot_all_summarised_etf(self, groupby, sort_values_by="Weight (%)",
                                 kind="barh", legend=False, save=False,
                                 **kwargs):
         ax_list = []
-        for ETF in self.etf_list:
-            ax = ETF.plot_summarised_ETF(
+        for etf in self.etf_list:
+            ax = etf.plot_summarised_etf(
                 groupby=groupby, sort_values_by=sort_values_by, kind=kind,
                 legend=legend, save=save, **kwargs)
             ax_list.append(ax)
@@ -172,16 +173,16 @@ class Portfolio():
     def get_company_info(self, company_name, sort_values_by="Weight (%)"):
 
         company_etf_weight = 0
-        for ETF in self.etf_list:
-            fn, company_weight = ETF._company_weighting(
+        for etf in self.etf_list:
+            fn, company_weight = etf._company_weighting(
                 company_name, sort_values_by)
 
             if company_weight is not None:
-                percent_to_scale = self.ticker_percent_dict[ETF.ticker]/100
+                percent_to_scale = self.ticker_percent_dict[etf.ticker]/100
 
                 company_etf_weight += company_weight * percent_to_scale
 
                 full_name = fn
 
-        print(f"\n{full_name} has a weighting of {company_etf_weight:.3f} % "
+        print(f"{full_name} has a weighting of {company_etf_weight:.3f} % "
               "in this Portfolio.")
