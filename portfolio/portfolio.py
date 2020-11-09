@@ -184,4 +184,4 @@ class Portfolio():
                 full_name = fn
 
         print(f"\n{full_name} has a weighting of {company_etf_weight:.3f} % "
-              "in this ETF.")
+              "in this Portfolio.")
