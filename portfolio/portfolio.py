@@ -53,12 +53,12 @@ class Portfolio():
         Load both ETF and Portfolio with the API
 
         >>> import portfolio.api as pf
-        >>> ticker_percent_dict = {'CSPX': 10, 'IAEA': 75, 'SUWU': 15}
+        >>> ticker_percent_dict = {'CSPX': 10, 'IAEA': 75, 'IWDG': 15}
         >>> my_portfolio_2 = pf.Portfolio(ticker_percent_dict, "Portfolio 2")
         Downloading Portfolio Data
 
         >>> my_portfolio_2
-        <Portfolio, Portfolio 2, {'CSPX': 10, 'IAEA': 75, 'SUWU': 15}>
+        <Portfolio, Portfolio 2, {'CSPX': 10, 'IAEA': 75, 'IWDG': 15}>
 
         Get weighting of single companies
 
@@ -183,5 +183,5 @@ class Portfolio():
 
                 full_name = fn
 
-        print(f"\n{full_name} has a weighting of {company_etf_weight} % "
+        print(f"\n{full_name} has a weighting of {company_etf_weight:.3f} % "
               "in this ETF.")
