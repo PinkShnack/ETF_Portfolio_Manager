@@ -8,7 +8,7 @@ from portfolio.etf import ETF
 
 class Portfolio():
 
-    def __init__(self, ticker_percent_dict, portfolio_name='',
+    def __init__(self, ticker_percent_dict, country, portfolio_name='',
                  dummy_data=False):
         '''
         Portfolio class allows users to interact with the program intuitively
@@ -23,11 +23,12 @@ class Portfolio():
         --------
         >>> from portfolio.portfolio import Portfolio
         >>> ticker_percent_dict = {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}
-        >>> my_portfolio = Portfolio(ticker_percent_dict, "Cool Portfolio")
+        >>> my_portfolio = Portfolio(
+        ...     ticker_percent_dict, "UK", "Cool Portfolio")
         Downloading Portfolio Data
 
         >>> my_portfolio
-        <Portfolio, Cool Portfolio, {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}>
+        <Portfolio, Cool Portfolio, {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}, UK>
 
         The df_list attribute is just a list of Pandas dataframes, allowing
         you to use Pandas for any data analysis you wish.
@@ -53,12 +54,12 @@ class Portfolio():
         Load both ETF and Portfolio with the API
 
         >>> import portfolio.api as pf
-        >>> ticker_percent_dict = {'CSPX': 10, 'IAEA': 75, 'IWDG': 15}
-        >>> my_portfolio_2 = pf.Portfolio(ticker_percent_dict, "Portfolio 2")
+        >>> ticker_percent_dict = {'IVV': 10, 'IWM': 75, 'IEFA': 15}
+        >>> my_portfolio_2 = pf.Portfolio(ticker_percent_dict, "US")
         Downloading Portfolio Data
 
         >>> my_portfolio_2
-        <Portfolio, Portfolio 2, {'CSPX': 10, 'IAEA': 75, 'IWDG': 15}>
+        <Portfolio, Portfolio 2, {'IVV': 10, 'AGG': 75, 'IWF': 15}>
 
         Get weighting of single companies
 
@@ -67,13 +68,14 @@ class Portfolio():
 
         '''
 
+        self.country = country.upper()
         self._ticker_percent_dict_init(ticker_percent_dict)
         self.portfolio_name = portfolio_name
         self.dummy_data = dummy_data
         self.df_list = []
-        self._load_tickers_init(self.ticker_percent_dict, self.dummy_data)
+        #self._load_tickers_init(self.ticker_percent_dict, self.dummy_data)
         self.etf_list = []
-        self._create_etf_objects(self.ticker_percent_dict)
+        self._create_etf_objects()
 
     def _ticker_percent_dict_init(self, ticker_percent_dict):
         if sum(ticker_percent_dict.values()) == 100:
@@ -82,36 +84,42 @@ class Portfolio():
             raise ValueError(
                 "Your ticker_percent_dict percentages don't add up to 100%")
 
-    def _load_tickers_init(self, ticker_percent_dict, dummy_data):
-        """ Load the chosen tickers."""
+    # def _load_tickers_init(self, ticker_percent_dict, dummy_data):
+    #     """ Load the chosen tickers."""
 
-        if not isinstance(ticker_percent_dict, dict):
-            raise ValueError("ticker_percent_dict must be a dictionary")
+    #     chosen_tickers = [i for i in ticker_percent_dict.keys()]
 
-        chosen_tickers = [i for i in ticker_percent_dict.keys()]
+    #     print("Downloading Portfolio Data")
+    #     df_list = port_io.load_tickers(ticker_list=chosen_tickers,
+    #                                    dummy_data=dummy_data)
 
-        print("Downloading Portfolio Data")
-        df_list = port_io.load_tickers(ticker_list=chosen_tickers,
-                                       dummy_data=dummy_data)
-
-        self.df_list = df_list
+    #     self.df_list = df_list
 
     def __repr__(self):
-        return '<%s, %s, %s>' % (
+        return '<%s, %s, %s, %s>' % (
             self.__class__.__name__,
             self.portfolio_name,
-            self.ticker_percent_dict
+            self.ticker_percent_dict,
+            self.country
         )
 
-    def _create_etf_objects(self, ticker_percent_dict):
+    def _create_etf_objects(self):
 
+        if not isinstance(self.ticker_percent_dict, dict):
+            raise ValueError("ticker_percent_dict must be a dictionary")
         ticker_list = [i for i in self.ticker_percent_dict.keys()]
 
+        print("Downloading Portfolio Data")
+
         etf_list = []
+        df_list = []
         for ticker in ticker_list:
-            etf_list.append(ETF(ticker=ticker))
+            etf = ETF(ticker, self.country, self.dummy_data)
+            etf_list.append(etf)
+            df_list.append(etf.df)
 
         self.etf_list = etf_list
+        self.df_list = df_list
 
     def summarise_portfolio(self, groupby, sort_values_by="Weight (%)"):
 
