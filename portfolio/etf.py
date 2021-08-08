@@ -5,7 +5,7 @@ import portfolio.io as port_io
 import portfolio.setup_data as setup_data
 
 
-class ETF():
+class ETF:
 
     def __init__(self, ticker, country, dummy_data=False):
         '''
@@ -23,7 +23,7 @@ class ETF():
         --------
         >>> from portfolio.etf import ETF
         >>> ticker = 'CSPX'
-        >>> SP500 = ETF(ticker='CSPX', country="UK")
+        >>> SP500 = ETF(ticker=ticker, country="UK")
         >>> SP500
         <ETF, CSPX, iShares Core S&P 500 UCITS ETF USD (Acc)>
 
@@ -34,7 +34,7 @@ class ETF():
 
         Check out the first 3 lines in the Pandas dataframe
 
-        >>> _ = SP500.df.head(3)
+        >>> SP500.df.head(3)
         >>> ax = SP500.plot_summarised_etf(groupby="Sector")
 
         Look at the weighting of a single company
@@ -43,6 +43,10 @@ class ETF():
         APPLE INC has a weighting of 6.4 % in this ETF.
         ('APPLE INC', 6.4)
 
+        Example of dummy data
+        >>> etf1 = ETF(ticker='EUNK', country="GER", dummy_data=True)
+        >>> print(etf1.df.head())
+        >>> ax = etf1.plot_summarised_etf(groupby="Sector")
 
         '''
 
@@ -52,26 +56,34 @@ class ETF():
         self._etf_ticker_name_init()
         self.df = None  # will be replaced with df when loaded
         self.dummy_data = dummy_data
-        self._load_tickers_init(self.ticker, self.dummy_data)
+        self._load_tickers_init()
 
-
-    def _load_tickers_init(self, ticker, dummy_data):
+    def _load_tickers_init(self):
         """ Load the chosen ticker."""
 
-        if not isinstance(ticker, str):
+        if not isinstance(self.ticker, str):
             raise ValueError("ticker must be a string")
 
-        df_list = port_io.load_tickers(ticker_list=[ticker],
+        df_list = port_io.load_tickers(ticker_list=[self.ticker],
                                        country=self.country,
                                        dummy_data=self.dummy_data)
 
-        if len(df_list) != 1:
-            raise ValueError("Problem with loading ETF, should be just 1 "
-                             "ticker, but more than 1 loaded")
-        else:
+        if len(df_list) == 1:
             df = df_list[0]
+        else:
+            raise ValueError("Problem with loading ETF, should be 1 ticker. "
+                             f"Got {len(df_list)} instead.")
 
         self.df = df
+        self._handle_other_languages()
+
+    def _handle_other_languages(self):
+        """Create English versions of each important column"""
+        if self.country == "GER":
+            self.df["Ticker"] = self.df["Emittententicker"]
+            self.df["Weight (%)"] = self.df["Gewichtung (%)"]
+            self.df["Sector"] = self.df["Sektor"]
+            print(self.df.head())
 
     def __repr__(self):
         return '<%s, %s, %s>' % (

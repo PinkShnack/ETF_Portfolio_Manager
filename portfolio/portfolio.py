@@ -6,7 +6,7 @@ import portfolio.io as port_io
 from portfolio.etf import ETF
 
 
-class Portfolio():
+class Portfolio:
 
     def __init__(self, ticker_percent_dict, country, portfolio_name='',
                  dummy_data=False):
@@ -22,9 +22,8 @@ class Portfolio():
         Examples
         --------
         >>> from portfolio.portfolio import Portfolio
-        >>> ticker_percent_dict = {'CSPX': 50, 'IAEA': 25, 'SUWU': 25}
-        >>> my_portfolio = Portfolio(
-        ...     ticker_percent_dict, "UK", "Cool Portfolio")
+        >>> ticker_info = {'AYEM': 100}
+        >>> my_portfolio = Portfolio(ticker_info, "GER", "Cool Portfolio", dummy_data=True)
         Downloading Portfolio Data
 
         >>> my_portfolio

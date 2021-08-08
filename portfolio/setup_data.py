@@ -3,20 +3,18 @@ import numpy as np
 import os
 from bs4 import BeautifulSoup
 
-if "data" not in os.getcwd():
-    path_to_data = os.path.join(os.path.dirname(''), 'data')
-    os.chdir(path_to_data)
-
 
 def dataframe_data_preparation(country="UK"):
 
     country_filename_csv, _ = get_filename_from_country(country=country)
 
     product_data_all = pd.read_csv(country_filename_csv, skiprows=[1])
-    # product_data_all.head(3)
 
     product_data_all['Ticker'].replace('-', np.nan, inplace=True)
     # product_data_all.head(3)
+
+    if country == "GER":
+        product_data_all["Name"] = product_data_all["Name der Anteilklasse"]
 
     product_data_ticker = product_data_all.dropna(subset=['Ticker'])
     # product_data_ticker.head(3)
@@ -46,8 +44,13 @@ def get_filename_from_country(country):
     elif "GER" in country:
         country_filename_csv = "all_Germany_products_ishares.csv"    
         country_filename_html = "all_ishares_Germany_etf_links.html"
+    else:
+        raise ValueError("`country` keyword must be 'UK', 'GER' or 'US'.")
 
-    return(country_filename_csv, country_filename_html)
+    country_filename_csv = f"data/{country_filename_csv}"
+    country_filename_html = f"data/{country_filename_html}"
+    return country_filename_csv, country_filename_html
+
 
 # Create ticker + name dict, ISIN + ticker dict
 def create_ticker_name_dict(country="UK"):

@@ -1,1 +1,6 @@
-[]
+[
+  "tests/test_etf.py::test_etf_country",
+  "tests/test_etf.py::test_etf_creation",
+  "tests/test_etf.py::test_etf_summarise1",
+  "tests/test_portfolio.py::test_etf_creation"
+]

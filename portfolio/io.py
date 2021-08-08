@@ -31,7 +31,6 @@ def get_holdings_urls_from_ticker_list(ticker_list, country="UK"):
 
     ticker_code_number_dict = setup_data.create_ticker_code_number_dict(
         country=country)
-    print(ticker_code_number_dict)
 
     chosen_tickers_dict = {}
     for k, v in ticker_code_number_dict.items():
